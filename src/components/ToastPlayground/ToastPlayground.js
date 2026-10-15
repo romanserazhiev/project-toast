@@ -9,6 +9,20 @@ const VARIANT_OPTIONS = ["notice", "warning", "success", "error"];
 
 function ToastPlayground() {
   const [message, setMessage] = React.useState("");
+  const [selectedOption, setSelectedOption] = React.useState("notice");
+  const [showToast, setShowToast] = React.useState(false);
+
+  function handleCloseToast() {
+    setShowToast(false);
+  }
+
+  function handleShowToast() {
+    setShowToast(true);
+  }
+
+  function handleRadioSelect(event) {
+    setSelectedOption(event.target.value)
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -17,7 +31,7 @@ function ToastPlayground() {
         <h1>Toast Playground</h1>
       </header>
 
-      <Toast />
+      {showToast && <Toast variant={selectedOption} onClose={handleCloseToast}>{message}</Toast>}
 
       <div className={styles.controlsWrapper}>
         <div className={styles.row}>
@@ -53,6 +67,8 @@ function ToastPlayground() {
                   type="radio"
                   name="variant"
                   value={option}
+                  checked={option === selectedOption}
+                  onChange={handleRadioSelect}
                 />
                 {option}
               </label>
@@ -63,7 +79,7 @@ function ToastPlayground() {
         <div className={styles.row}>
           <div className={styles.label} />
           <div className={`${styles.inputWrapper} ${styles.radioWrapper}`}>
-            <Button>Pop Toast!</Button>
+            <Button onClick={handleShowToast}>Pop Toast!</Button>
           </div>
         </div>
       </div>
