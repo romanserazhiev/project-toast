@@ -2,15 +2,28 @@ import React from "react";
 
 import Button from "../Button";
 import Toast from "../Toast";
+import ToastShelf from "../ToastShelf"
 
 import styles from "./ToastPlayground.module.css";
 
 const VARIANT_OPTIONS = ["notice", "warning", "success", "error"];
 
 function ToastPlayground() {
-  const [message, setMessage] = React.useState("");
+  const [toasts, setToasts] = React.useState([]);
+  const [currentMessage, setCurrentMessage] = React.useState("");
   const [selectedOption, setSelectedOption] = React.useState("notice");
   const [showToast, setShowToast] = React.useState(false);
+
+  function handleAddToast() {
+    const newToast = {
+      message: currentMessage,
+      variant: selectedOption,
+      id: crypto.randomUUID(),
+    }
+
+    const nextToasts = [...toasts, newToast]
+    setToasts(nextToasts);
+  }
 
   function handleCloseToast() {
     setShowToast(false);
@@ -31,9 +44,12 @@ function ToastPlayground() {
         <h1>Toast Playground</h1>
       </header>
 
-      {showToast && <Toast variant={selectedOption} onClose={handleCloseToast}>{message}</Toast>}
+      {showToast && <ToastShelf toasts={toasts} />}
 
-      <div className={styles.controlsWrapper}>
+      <form onSubmit={event => {
+        event.preventDefault();
+        handleAddToast()
+      }} className={styles.controlsWrapper}>
         <div className={styles.row}>
           <label
             htmlFor="message"
@@ -46,9 +62,9 @@ function ToastPlayground() {
             <textarea
               id="message"
               className={styles.messageInput}
-              value={message}
+              value={currentMessage}
               onChange={(event) => {
-                setMessage(event.target.value);
+                setCurrentMessage(event.target.value);
               }}
             />
           </div>
@@ -82,7 +98,7 @@ function ToastPlayground() {
             <Button onClick={handleShowToast}>Pop Toast!</Button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
