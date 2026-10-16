@@ -2,14 +2,31 @@ import React from "react";
 
 import Toast from "../Toast";
 import styles from "./ToastShelf.module.css";
+import { ToastContext } from "../ToastProvider";
 
-function ToastShelf({ toasts }) {
+function ToastShelf() {
+  const { toasts, clearAllToasts, useEscapeKey } =
+    React.useContext(ToastContext);
+
+  const handleEscape = React.useCallback(() => {
+    clearAllToasts();
+  }, []);
+
+  useEscapeKey(handleEscape);
+
   return (
-    <ol className={styles.wrapper}>
+    <ol
+      role="region"
+      aria-live="polite"
+      aria-label="Notification"
+      className={styles.wrapper}
+    >
       {toasts.map((toast) => {
         return (
           <li key={toast.id} className={styles.toastWrapper}>
-            <Toast variant={toast.variant}>{toast.message}</Toast>
+            <Toast id={toast.id} variant={toast.variant}>
+              {toast.message}
+            </Toast>
           </li>
         );
       })}
